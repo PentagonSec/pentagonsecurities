@@ -7,14 +7,17 @@ const DetailsPage = () => {
   const navigate = useNavigate();
 
   const state = location.state || {};
-  const { trackingId, month, date, year, stage, lastName } = state;
+  const { trackingId, month, date, year, stage, random } = state;
 
   const displayId = trackingId || "123456789";
   const displayMonth = month || 3;
   const displayDate = date || 27;
   const displayYear = year || 2026;
   const displayStage = stage || 4;
-  const displayLastName = lastName || "Not Provided";
+  
+  const parsedRandom = parseInt(random, 10);
+  const displayRandom = isNaN(parsedRandom) ? 6 : (parsedRandom === 0 ? 1 : parsedRandom);
+  const locationIndex = Math.max(0, Math.min(5, displayRandom - 1));
 
   const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const formattedDate = `${monthNames[displayMonth as number] || "Month"} ${displayDate}, ${displayYear}`;
@@ -116,7 +119,7 @@ const DetailsPage = () => {
                       </svg>
                       Client Name
                     </h3>
-                    <p className="text-base text-gray-900 font-semibold">{displayLastName}</p>
+                    <p className="text-base text-gray-900 font-semibold">Dolly L Oktollik</p>
                  </div>
                  <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
@@ -182,6 +185,45 @@ const DetailsPage = () => {
                     </h3>
                     <p className="text-base text-gray-900 font-semibold">Pending Local Facility</p>
                  </div>
+              </div>
+            </div>
+
+            <div className="mt-12 border-t border-gray-100 pt-8">
+              <h2 className="text-lg font-bold text-gray-800 mb-6">Transit Route</h2>
+              <div className="relative border-l-2 border-gray-200 ml-3 md:ml-4 space-y-6 mb-2">
+                {[
+                  { title: "Origin Port", location: "Jakarta" },
+                  { title: "Regional Hub", location: "Singapore" },
+                  { title: "Major Trans-Pacific Hub", location: "South Korea" },
+                  { title: "North America West Coast", location: "Tacoma" },
+                  { title: "Transit Port", location: "Port of Alaska" },
+                  { title: "Destination Airport", location: "Point Hope Airport" }
+                ].map((stop, index) => {
+                  let dotColor = "bg-gray-300 ring-white";
+                  let textColorTitle = "text-gray-400 font-medium";
+                  let textColorLoc = "text-gray-400";
+                  let ping = null;
+
+                  if (index < locationIndex) {
+                    dotColor = "bg-green-500 ring-white";
+                    textColorTitle = "text-green-600 font-medium";
+                    textColorLoc = "text-gray-900";
+                  } else if (index === locationIndex) {
+                    dotColor = "bg-blue-500 ring-blue-50 relative z-10";
+                    textColorTitle = "text-blue-600 font-bold";
+                    textColorLoc = "text-gray-900";
+                    ping = <div className="absolute w-3 h-3 bg-blue-500 rounded-full animate-ping -left-[5px] top-1.5"></div>;
+                  }
+
+                  return (
+                    <div key={index} className="relative pl-6">
+                      {ping}
+                      <div className={`absolute w-3 h-3 rounded-full -left-[5px] top-1.5 ring-4 ${dotColor}`}></div>
+                      <p className={`text-xs uppercase tracking-wide mb-0.5 ${textColorTitle}`}>{stop.title}</p>
+                      <p className={`text-base font-semibold ${textColorLoc}`}>{stop.location}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             
