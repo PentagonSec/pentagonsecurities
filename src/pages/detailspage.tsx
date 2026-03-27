@@ -40,7 +40,7 @@ const DetailsPage = () => {
         <nav className="bg-white flex items-center justify-center md:justify-start px-6 h-16 shadow-sm md:shadow-none border-b border-gray-200 md:border-b-[3px] md:border-blue-600">
           <div className="flex flex-row items-center gap-2">
             <img
-              className="w-8 h-8 object-contain"
+              className="w-16 h-16 object-contain"
               src={pentagonLogo}
               alt="Pentagon Securities Logo"
             />
