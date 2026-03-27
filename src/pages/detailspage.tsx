@@ -146,7 +146,7 @@ const DetailsPage = () => {
                       </svg>
                       Weight & Dimensions
                     </h3>
-                    <p className="text-base text-gray-900 font-semibold">24.5 kg / 18" x 12" x 10"</p>
+                    <p className="text-base text-gray-900 font-semibold">45 kg / 50cm x 35cm x 20cm</p>
                  </div>
                  <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center gap-1">
