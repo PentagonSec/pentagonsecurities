@@ -65,6 +65,7 @@ const TrackingPage = () => {
   const [trackingId, setTrackingId] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleTrack = (e?: React.FormEvent) => {
@@ -124,18 +125,22 @@ const TrackingPage = () => {
     // Clamp stage between 1 and 4 for our progress UI
     const stage = Math.max(1, Math.min(4, stageRaw));
 
-    // Validation passed, navigate to details page with extracted data
-    navigate("/details", {
-      state: {
-        trackingId: cleanedId,
-        month,
-        date,
-        year: 2000 + year, // assuming 2000s
-        stage,
-        random,
-        lastName
-      }
-    });
+    // Validation passed, mock verification wait then navigate
+    setIsLoading(true);
+    setTimeout(() => {
+      navigate("/details", {
+        state: {
+          trackingId: cleanedId,
+          month,
+          date,
+          year: 2000 + year, 
+          stage,
+          random,
+          lastName
+        }
+      });
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -248,10 +253,22 @@ const TrackingPage = () => {
             </div>
 
             {/* Track Button */}
-            <button type="submit" className="w-full md:w-auto md:min-w-[180px] h-12 py-3 px-8 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors text-[17px] cursor-pointer focus:ring-4 focus:ring-blue-100 shadow-md">
+            <button disabled={isLoading} type="submit" className={`w-full md:w-auto md:min-w-[180px] h-12 py-3 px-8 text-white font-bold rounded-lg transition-colors text-[17px] shadow-md ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-100 cursor-pointer'}`}>
               <div className="flex flex-row gap-2 items-center justify-center">
-                <p>Track</p>
-                <img className="w-5 h-5 object-contain" src={rightIcon} alt="track" />
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p>Verifying...</p>
+                  </>
+                ) : (
+                  <>
+                    <p>Track</p>
+                    <img className="w-5 h-5 object-contain" src={rightIcon} alt="track" />
+                  </>
+                )}
               </div>
             </button>
           </div>
@@ -260,16 +277,29 @@ const TrackingPage = () => {
 
       <footer className="shrink-0 bg-gray-100 border-t border-gray-200 py-4 text-gray-600 text-sm flex flex-col items-center justify-center gap-2">
         <div className="flex flex-row gap-4 font-medium">
-          <a href="#" className="hover:text-blue-600 transition-colors">Privacy Statement</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Privacy Statement</a>
           <span className="text-gray-300">|</span>
-          <a href="#" className="hover:text-blue-600 transition-colors">Terms of Use</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Terms of Use</a>
           <span className="text-gray-300">|</span>
-          <a href="#" className="hover:text-blue-600 transition-colors">Cookies</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Cookies</a>
         </div>
         <p>© 2026 Pentagon Securities. All rights reserved.</p>
       </footer>
 
       <QuestionModal />
+
+      <dialog className="modal" id="legal-modal" onClick={(e) => { if (e.target === e.currentTarget) { (document.getElementById("legal-modal") as HTMLDialogElement)?.close(); } }}>
+        <div className="modal-box p-6 bg-white shadow-xl rounded-xl max-w-sm">
+          <h3 className="font-bold text-lg text-gray-800">Secure Document Access</h3>
+          <p className="py-3 text-gray-600 text-sm">The requested legal document is currently encrypted for transmission.</p>
+          <p className="pb-4 text-gray-600 text-sm">Please verify your identity at a local branch to review these terms.</p>
+          <div className="modal-action mt-2">
+            <form method="dialog">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Acknowledge</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div >
   );
 };

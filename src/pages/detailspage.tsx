@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import targetIcon from "../assets/target.png";
 import pentagonLogo from "../assets/pentagonlogo.png";
 
@@ -6,8 +6,11 @@ const DetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const state = location.state || {};
-  const { trackingId, month, date, year, stage, random } = state;
+  if (!location.state || !location.state.trackingId) {
+    return <Navigate to="/tracking" replace />;
+  }
+
+  const { trackingId, month, date, year, stage, random } = location.state;
 
   const displayId = trackingId || "123456789";
   const displayMonth = month || 3;
@@ -53,9 +56,17 @@ const DetailsPage = () => {
 
       <main className="bg-gray-100 flex-1 w-full overflow-auto pb-10">
         <div className="max-w-3xl mx-auto pt-6 px-4">
-          <div className="flex flex-row gap-2 items-center justify-start pb-4">
-            <img className="w-6" src={targetIcon} alt="target" />
-            <p className="text-3xl font-base text-gray-600">Tracking Details</p>
+          <div className="flex flex-row justify-between items-center pb-4">
+            <div className="flex flex-row gap-2 items-center justify-start">
+              <img className="w-6" src={targetIcon} alt="target" />
+              <p className="text-3xl font-base text-gray-600">Tracking Details</p>
+            </div>
+            <button onClick={() => window.print()} className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 py-2 px-4 rounded-md text-sm font-medium transition-colors shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2-2v4h10z" />
+              </svg>
+              Print Record
+            </button>
           </div>
           
           <hr className="border-gray-300 mb-6" />
@@ -83,7 +94,7 @@ const DetailsPage = () => {
                    
                    <div className="relative flex flex-col items-center z-10">
                        <div className={`w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow transition-all duration-500 ${getStageClass(1)}`}></div>
-                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(1)}`}>Started</p>
+                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(1)}`}>Processed</p>
                    </div>
                    <div className="relative flex flex-col items-center z-10">
                        <div className={`w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow transition-all duration-500 ${getStageClass(2)}`}></div>
@@ -91,11 +102,11 @@ const DetailsPage = () => {
                    </div>
                    <div className="relative flex flex-col items-center z-10">
                        <div className={`w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow transition-all duration-500 ${getStageClass(3)}`}></div>
-                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(3)}`}>Available</p>
+                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(3)}`}>Awaiting Clearance</p>
                    </div>
                    <div className="relative flex flex-col items-center z-10">
                        <div className={`w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow transition-all duration-500 ${getStageClass(4)}`}></div>
-                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(4)}`}>Received</p>
+                       <p className={`text-xs font-semibold mt-2 absolute top-8 whitespace-nowrap transition-colors duration-500 ${getStageLabelClass(4)}`}>Delivered</p>
                    </div>
                </div>
             </div>
@@ -237,14 +248,27 @@ const DetailsPage = () => {
 
       <footer className="shrink-0 bg-gray-100 border-t border-gray-200 py-4 text-gray-600 text-sm flex flex-col items-center justify-center gap-2">
         <div className="flex flex-row gap-4 font-medium">
-          <a href="#" className="hover:text-blue-600 transition-colors">Privacy Statement</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Privacy Statement</a>
           <span className="text-gray-300">|</span>
-          <a href="#" className="hover:text-blue-600 transition-colors">Terms of Use</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Terms of Use</a>
           <span className="text-gray-300">|</span>
-          <a href="#" className="hover:text-blue-600 transition-colors">Cookies</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); (document.getElementById('legal-modal') as HTMLDialogElement)?.showModal(); }} className="hover:text-blue-600 transition-colors">Cookies</a>
         </div>
         <p>© 2026 Pentagon Securities. All rights reserved.</p>
       </footer>
+
+      <dialog className="modal" id="legal-modal" onClick={(e) => { if (e.target === e.currentTarget) { (document.getElementById("legal-modal") as HTMLDialogElement)?.close(); } }}>
+        <div className="modal-box p-6 bg-white shadow-xl rounded-xl max-w-sm">
+          <h3 className="font-bold text-lg text-gray-800">Secure Document Access</h3>
+          <p className="py-3 text-gray-600 text-sm">The requested legal document is currently encrypted for transmission.</p>
+          <p className="pb-4 text-gray-600 text-sm">Please verify your identity at a local branch to review these terms.</p>
+          <div className="modal-action mt-2">
+            <form method="dialog">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Acknowledge</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
