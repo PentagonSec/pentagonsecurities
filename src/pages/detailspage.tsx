@@ -220,10 +220,10 @@ const DetailsPage = () => {
                     textColorTitle = "text-green-600 font-medium";
                     textColorLoc = "text-gray-900";
                   } else if (index === locationIndex) {
-                    dotColor = "bg-blue-500 ring-blue-50 relative z-10";
+                    dotColor = "bg-green-500 ring-blue-50 relative z-10";
                     textColorTitle = "text-blue-600 font-bold";
                     textColorLoc = "text-gray-900";
-                    ping = <div className="absolute w-3 h-3 bg-blue-500 rounded-full animate-ping -left-[5px] top-1.5"></div>;
+                    ping = <div className="absolute w-3 h-3 bg-green-500 rounded-full animate-ping -left-[5px] top-1.5"></div>;
                   }
 
                   return (
